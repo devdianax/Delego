@@ -634,4 +634,30 @@ fn test_remove_co_admin() {
     assert_eq!(res2, Err(Ok(EscrowError::Unauthorized)));
 }
 
+#[test]
+fn test_co_admin_accepts_primary_admin() {
+    let t = TestEnv::setup();
+    let escrow_client = EscrowContractClient::new(&t.env, &t.escrow_contract_id);
+    let co_admin = Address::generate(&t.env);
+
+    // 1. Add co-admin
+    assert!(escrow_client.add_co_admin(&t.admin, &co_admin));
+    assert!(escrow_client.is_admin(&co_admin));
+
+    // 2. Propose the co-admin as the new primary admin
+    assert!(escrow_client.propose_admin(&t.admin, &co_admin));
+
+    // 3. Co-admin accepts role -> should be removed from co-admins list
+    assert!(escrow_client.accept_admin(&co_admin));
+    assert!(escrow_client.is_admin(&co_admin));
+
+    // 4. Now, the new primary admin (co_admin) proposes the old admin
+    assert!(escrow_client.propose_admin(&co_admin, &t.admin));
+    assert!(escrow_client.accept_admin(&t.admin));
+
+    // 5. Old co-admin (who accepted primary admin earlier, and was then replaced) should no longer be admin!
+    assert!(!escrow_client.is_admin(&co_admin));
+}
+
+
 

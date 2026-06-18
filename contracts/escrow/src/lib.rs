@@ -388,6 +388,17 @@ impl EscrowContract {
         if new_admin != pending_admin {
             return Err(EscrowError::InvalidPendingAdmin);
         }
+
+        let mut admin_list: soroban_sdk::Vec<Address> = env
+            .storage()
+            .instance()
+            .get(&DataKey::AdminList)
+            .unwrap_or_else(|| soroban_sdk::Vec::new(&env));
+        if let Some(index) = admin_list.first_index_of(&new_admin) {
+            admin_list.remove(index);
+            env.storage().instance().set(&DataKey::AdminList, &admin_list);
+        }
+
         env.storage().instance().set(&DataKey::Admin, &new_admin);
         env.storage().instance().remove(&DataKey::PendingAdmin);
         Ok(true)
