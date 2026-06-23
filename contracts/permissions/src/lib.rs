@@ -4,8 +4,8 @@
 #![no_std]
 use soroban_sdk::{contract, contractimpl, contracttype, symbol_short, Address, Env, Symbol, Vec};
 
-const PERM: Symbol = symbol_short!("PERM");
-const PENDING_DEC: Symbol = symbol_short!("PEND_DEC");
+const _PERM: Symbol = symbol_short!("PERM");
+const _PENDING_DEC: Symbol = symbol_short!("PEND_DEC");
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -255,7 +255,7 @@ impl PermissionsContract {
         owner.require_auth();
 
         let perm_key = DataKey::Permission(owner.clone(), delegate.clone());
-        let record: PermissionRecord = env.storage().persistent().get(&perm_key).unwrap();
+        let _record: PermissionRecord = env.storage().persistent().get(&perm_key).unwrap();
 
         let pend_key = DataKey::PendingDecrement(owner.clone(), delegate.clone());
         if env.storage().persistent().has(&pend_key) {

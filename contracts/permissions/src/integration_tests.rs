@@ -9,9 +9,9 @@ struct TestEnv {
     buyer: Address,
     seller: Address,
     agent: Address,
-    token_contract_id: Address,
-    token_admin: Address,
-    escrow_contract_id: Address,
+    _token_contract_id: Address,
+    _token_admin: Address,
+    _escrow_contract_id: Address,
     permissions_contract_id: Address,
 }
 
@@ -26,7 +26,7 @@ impl TestEnv {
         let agent = Address::generate(&env);
 
         let token_admin = Address::generate(&env);
-        let token_contract_id = env.register_stellar_asset_contract(token_admin.clone());
+        let token_contract_id = env.register_stellar_asset_contract_v2(token_admin.clone());
         let token_admin_client = soroban_sdk::token::StellarAssetClient::new(&env, &token_contract_id);
         token_admin_client.mint(&buyer, &10000);
 
@@ -39,9 +39,9 @@ impl TestEnv {
             buyer,
             seller,
             agent,
-            token_contract_id,
-            token_admin,
-            escrow_contract_id,
+            _token_contract_id: token_contract_id,
+            _token_admin: token_admin,
+            _escrow_contract_id: escrow_contract_id,
             permissions_contract_id,
         }
     }
